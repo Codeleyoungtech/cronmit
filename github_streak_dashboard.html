@@ -347,7 +347,7 @@
       brush: 1,
       grid: Array.from({ length: 7 }, () => Array(12).fill(1)),
       hostedSession: new URLSearchParams(location.search).get("session") || localStorage.getItem("cronmit_session") || "",
-      apiBase: localStorage.getItem("cronmit_api_base") || window.CRONMIT_API_BASE || ""
+      apiBase: localStorage.getItem("cronmit_api_base") || window.CRONMIT_API_BASE || "https://cronmit-api.olivia-eleyoungtech-io.workers.dev"
     };
 
     const $ = (id) => document.getElementById(id);

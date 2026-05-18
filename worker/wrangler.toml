@@ -3,11 +3,11 @@ main = "src/index.js"
 compatibility_date = "2026-05-18"
 
 kv_namespaces = [
-  { binding = "CRONMIT_SESSIONS", id = "replace-with-production-kv-id", preview_id = "replace-with-preview-kv-id" }
+  { binding = "CRONMIT_SESSIONS", id = "ee6539fcc6264e889c38750c41a9b610", preview_id = "d61ee209587a45c5a4ad84ea314385b3" }
 ]
 
 [vars]
-GITHUB_CLIENT_ID = "replace-with-github-oauth-client-id"
+GITHUB_CLIENT_ID = "Ov23liqHqYGGeDLVI5Py"
 ALLOWED_ORIGINS = "https://codeleyoungtech.github.io,http://localhost:8788,http://127.0.0.1:8788"
 
 # Set secrets with:

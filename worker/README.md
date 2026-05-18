@@ -23,8 +23,10 @@ Self-hosters can deploy this Worker if they want their own OAuth app and infrast
 
 Create a GitHub OAuth app with:
 
-- Homepage URL: your dashboard URL, for example `https://codeleyoungtech.github.io/cronmit/`
-- Authorization callback URL: your Worker URL plus `/auth/github/callback`
+- Application name: `Cronmit`
+- Homepage URL: `https://codeleyoungtech.github.io/cronmit/`
+- Authorization callback URL: `https://cronmit-api.olivia-eleyoungtech-io.workers.dev/auth/github/callback`
+- Device Flow: disabled
 
 The OAuth app needs users to approve `repo workflow` scopes.
 
@@ -32,15 +34,21 @@ The OAuth app needs users to approve `repo workflow` scopes.
 
 ```bash
 cd worker
-npm create cloudflare@latest
-wrangler kv namespace create CRONMIT_SESSIONS
-wrangler kv namespace create CRONMIT_SESSIONS --preview
-wrangler secret put GITHUB_CLIENT_SECRET
-wrangler secret put SESSION_SECRET
-wrangler deploy
+pnpm install
+pnpm exec wrangler kv namespace create CRONMIT_SESSIONS
+pnpm exec wrangler kv namespace create CRONMIT_SESSIONS --preview
+pnpm exec wrangler secret put GITHUB_CLIENT_SECRET
+pnpm exec wrangler secret put SESSION_SECRET
+pnpm exec wrangler deploy
 ```
 
 Then update `wrangler.toml` with your real KV IDs and `GITHUB_CLIENT_ID`.
+
+This repository's hosted Worker is deployed at:
+
+```text
+https://cronmit-api.olivia-eleyoungtech-io.workers.dev
+```
 
 ## Dashboard Setup
 
@@ -48,7 +56,7 @@ Host the dashboard with:
 
 ```html
 <script>
-  window.CRONMIT_API_BASE = "https://cronmit-api.your-account.workers.dev";
+  window.CRONMIT_API_BASE = "https://cronmit-api.olivia-eleyoungtech-io.workers.dev";
 </script>
 ```
 
