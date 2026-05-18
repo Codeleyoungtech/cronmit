@@ -1,0 +1,598 @@
+{
+  "app": "cronmit",
+  "version": 1,
+  "mode": "art",
+  "timezone_offset": 1,
+  "start_date": "2026-05-17",
+  "guarantee": "Every day has at least one real file-changing commit. Empty commits are never used.",
+  "days": [
+    {
+      "date": "2026-05-17",
+      "week": 1,
+      "day": "Sun",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-05-18",
+      "week": 1,
+      "day": "Mon",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-05-19",
+      "week": 1,
+      "day": "Tue",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-05-20",
+      "week": 1,
+      "day": "Wed",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-05-21",
+      "week": 1,
+      "day": "Thu",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-05-22",
+      "week": 1,
+      "day": "Fri",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-05-23",
+      "week": 1,
+      "day": "Sat",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-05-24",
+      "week": 2,
+      "day": "Sun",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-05-25",
+      "week": 2,
+      "day": "Mon",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-05-26",
+      "week": 2,
+      "day": "Tue",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-05-27",
+      "week": 2,
+      "day": "Wed",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-05-28",
+      "week": 2,
+      "day": "Thu",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-05-29",
+      "week": 2,
+      "day": "Fri",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-05-30",
+      "week": 2,
+      "day": "Sat",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-05-31",
+      "week": 3,
+      "day": "Sun",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-06-01",
+      "week": 3,
+      "day": "Mon",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-06-02",
+      "week": 3,
+      "day": "Tue",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-06-03",
+      "week": 3,
+      "day": "Wed",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-06-04",
+      "week": 3,
+      "day": "Thu",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-06-05",
+      "week": 3,
+      "day": "Fri",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-06-06",
+      "week": 3,
+      "day": "Sat",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-06-07",
+      "week": 4,
+      "day": "Sun",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-06-08",
+      "week": 4,
+      "day": "Mon",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-06-09",
+      "week": 4,
+      "day": "Tue",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-06-10",
+      "week": 4,
+      "day": "Wed",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-06-11",
+      "week": 4,
+      "day": "Thu",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-06-12",
+      "week": 4,
+      "day": "Fri",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-06-13",
+      "week": 4,
+      "day": "Sat",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-06-14",
+      "week": 5,
+      "day": "Sun",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-06-15",
+      "week": 5,
+      "day": "Mon",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-06-16",
+      "week": 5,
+      "day": "Tue",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-06-17",
+      "week": 5,
+      "day": "Wed",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-06-18",
+      "week": 5,
+      "day": "Thu",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-06-19",
+      "week": 5,
+      "day": "Fri",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-06-20",
+      "week": 5,
+      "day": "Sat",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-06-21",
+      "week": 6,
+      "day": "Sun",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-06-22",
+      "week": 6,
+      "day": "Mon",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-06-23",
+      "week": 6,
+      "day": "Tue",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-06-24",
+      "week": 6,
+      "day": "Wed",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-06-25",
+      "week": 6,
+      "day": "Thu",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-06-26",
+      "week": 6,
+      "day": "Fri",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-06-27",
+      "week": 6,
+      "day": "Sat",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-06-28",
+      "week": 7,
+      "day": "Sun",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-06-29",
+      "week": 7,
+      "day": "Mon",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-06-30",
+      "week": 7,
+      "day": "Tue",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-07-01",
+      "week": 7,
+      "day": "Wed",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-07-02",
+      "week": 7,
+      "day": "Thu",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-07-03",
+      "week": 7,
+      "day": "Fri",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-07-04",
+      "week": 7,
+      "day": "Sat",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-07-05",
+      "week": 8,
+      "day": "Sun",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-07-06",
+      "week": 8,
+      "day": "Mon",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-07-07",
+      "week": 8,
+      "day": "Tue",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-07-08",
+      "week": 8,
+      "day": "Wed",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-07-09",
+      "week": 8,
+      "day": "Thu",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-07-10",
+      "week": 8,
+      "day": "Fri",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-07-11",
+      "week": 8,
+      "day": "Sat",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-07-12",
+      "week": 9,
+      "day": "Sun",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-07-13",
+      "week": 9,
+      "day": "Mon",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-07-14",
+      "week": 9,
+      "day": "Tue",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-07-15",
+      "week": 9,
+      "day": "Wed",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-07-16",
+      "week": 9,
+      "day": "Thu",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-07-17",
+      "week": 9,
+      "day": "Fri",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-07-18",
+      "week": 9,
+      "day": "Sat",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-07-19",
+      "week": 10,
+      "day": "Sun",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-07-20",
+      "week": 10,
+      "day": "Mon",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-07-21",
+      "week": 10,
+      "day": "Tue",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-07-22",
+      "week": 10,
+      "day": "Wed",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-07-23",
+      "week": 10,
+      "day": "Thu",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-07-24",
+      "week": 10,
+      "day": "Fri",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-07-25",
+      "week": 10,
+      "day": "Sat",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-07-26",
+      "week": 11,
+      "day": "Sun",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-07-27",
+      "week": 11,
+      "day": "Mon",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-07-28",
+      "week": 11,
+      "day": "Tue",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-07-29",
+      "week": 11,
+      "day": "Wed",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-07-30",
+      "week": 11,
+      "day": "Thu",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-07-31",
+      "week": 11,
+      "day": "Fri",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-08-01",
+      "week": 11,
+      "day": "Sat",
+      "level": 1,
+      "commits": 1
+    },
+    {
+      "date": "2026-08-02",
+      "week": 12,
+      "day": "Sun",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-08-03",
+      "week": 12,
+      "day": "Mon",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-08-04",
+      "week": 12,
+      "day": "Tue",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-08-05",
+      "week": 12,
+      "day": "Wed",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-08-06",
+      "week": 12,
+      "day": "Thu",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-08-07",
+      "week": 12,
+      "day": "Fri",
+      "level": 4,
+      "commits": 10
+    },
+    {
+      "date": "2026-08-08",
+      "week": 12,
+      "day": "Sat",
+      "level": 4,
+      "commits": 10
+    }
+  ]
+}

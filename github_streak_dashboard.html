@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cronmit</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101114;
+      --panel: #17191d;
+      --panel-2: #202329;
+      --line: #313742;
+      --line-soft: #242a33;
+      --text: #f2f4f8;
+      --muted: #a8b0bd;
+      --dim: #727c8c;
+      --green-1: #14351f;
+      --green-2: #196c34;
+      --green-3: #20a64d;
+      --green-4: #43d66f;
+      --blue: #7db7ff;
+      --amber: #f5c451;
+      --red: #ff7d7d;
+      --shadow: 0 18px 54px rgba(0, 0, 0, 0.28);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 80% 0%, rgba(67, 214, 111, 0.10), transparent 32rem),
+        linear-gradient(180deg, #111318 0%, #0f1013 100%);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; min-width: 0; }
+    input, select, textarea { min-width: 0; }
+    .app { width: calc(100% - 32px); max-width: 1180px; margin: 0 auto; padding: 28px 0 44px; }
+    .topbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 18px; }
+    h1 { margin: 0; font-size: 28px; line-height: 1.1; font-weight: 740; letter-spacing: 0; }
+    .subtitle { margin: 8px 0 0; color: var(--muted); font-size: 13px; max-width: 720px; line-height: 1.65; }
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+      border: 1px solid rgba(67, 214, 111, 0.38); color: #a8f3bd; background: rgba(20, 53, 31, 0.72);
+      padding: 8px 10px; border-radius: 8px; font-size: 12px;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--green-4); box-shadow: 0 0 14px rgba(67, 214, 111, 0.75); }
+
+    .layout { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 14px; align-items: start; }
+    .layout > * { min-width: 0; }
+    .panel {
+      background: rgba(23, 25, 29, 0.92);
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+    .panel.pad { padding: 16px; }
+    .panel-title { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+    .controls { display: grid; gap: 14px; }
+    .field { display: grid; gap: 7px; }
+    label { color: var(--muted); font-size: 12px; }
+    input, select, textarea {
+      width: 100%; border: 1px solid var(--line); background: #111318; color: var(--text);
+      border-radius: 7px; padding: 10px 11px; outline: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: rgba(125, 183, 255, 0.8); }
+    .seg { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .seg.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .seg button, .btn {
+      border: 1px solid var(--line); background: #111318; color: var(--muted);
+      border-radius: 7px; min-height: 38px; padding: 8px 10px;
+    }
+    .seg button.active, .btn.primary { background: var(--green-2); color: white; border-color: var(--green-3); }
+    .btn.blue { border-color: rgba(125, 183, 255, 0.5); color: var(--blue); }
+    .btn.warn { border-color: rgba(245, 196, 81, 0.45); color: var(--amber); }
+    .button-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .button-row .btn { flex: 1; min-width: 116px; }
+    .action-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+    .action-grid .btn { width: 100%; }
+
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+    .stat { background: var(--panel); border: 1px solid var(--line-soft); border-radius: 8px; padding: 13px; }
+    .stat small { display: block; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    .stat strong { font-size: 24px; font-weight: 650; }
+    .stat span { color: var(--dim); font-size: 12px; margin-left: 4px; }
+
+    .tabs { display: flex; gap: 3px; border-bottom: 1px solid var(--line-soft); padding: 0 10px; overflow-x: auto; }
+    .tab {
+      border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--muted);
+      padding: 13px 10px 11px; white-space: nowrap; font-size: 12px;
+    }
+    .tab.active { color: var(--green-4); border-bottom-color: var(--green-4); }
+    .view { display: none; padding: 16px; }
+    .view.active { display: block; }
+
+    .schedule { display: flex; flex-wrap: wrap; gap: 7px; }
+    .time-pill { border: 1px solid rgba(67, 214, 111, 0.3); background: rgba(20, 53, 31, 0.55); color: #bdf8cb; border-radius: 999px; padding: 6px 9px; font-size: 12px; }
+    .time-pill.off { border-color: var(--line); background: #111318; color: var(--dim); }
+
+    .designer-wrap { display: grid; grid-template-columns: 1fr 230px; gap: 14px; }
+    .graph-board {
+      overflow-x: auto; padding: 12px; background: #111318; border: 1px solid var(--line-soft); border-radius: 8px;
+    }
+    .week-head { display: grid; grid-template-columns: 38px repeat(12, 22px); gap: 5px; color: var(--dim); font-size: 10px; margin-bottom: 5px; }
+    .paint-grid { display: grid; grid-template-columns: 38px repeat(12, 22px); gap: 5px; align-items: center; }
+    .day-label { color: var(--dim); font-size: 10px; text-align: right; padding-right: 4px; }
+    .cell {
+      width: 22px; height: 22px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05);
+      background: var(--green-1); padding: 0;
+    }
+    .cell.l1 { background: var(--green-1); }
+    .cell.l2 { background: var(--green-2); }
+    .cell.l3 { background: var(--green-3); }
+    .cell.l4 { background: var(--green-4); }
+    .legend { display: grid; gap: 8px; }
+    .level-btn { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: #111318; color: var(--muted); border-radius: 7px; padding: 8px; }
+    .level-btn.active { border-color: var(--blue); color: var(--text); }
+    .swatch { width: 16px; height: 16px; border-radius: 4px; background: var(--green-1); }
+    .swatch.l2 { background: var(--green-2); }
+    .swatch.l3 { background: var(--green-3); }
+    .swatch.l4 { background: var(--green-4); }
+
+    .code-wrap { position: relative; }
+    pre {
+      margin: 0; overflow: auto; max-height: 560px; background: #0b0d10; color: #d9e1ed;
+      border: 1px solid var(--line-soft); border-radius: 8px; padding: 42px 14px 14px;
+      line-height: 1.55; font-size: 12px; white-space: pre;
+    }
+    .copy {
+      position: absolute; top: 9px; right: 9px; border: 1px solid var(--line); background: #151922;
+      color: var(--muted); border-radius: 6px; padding: 6px 9px; font-size: 11px;
+    }
+    .note {
+      border-left: 3px solid var(--amber); background: rgba(245, 196, 81, 0.08);
+      padding: 10px 12px; color: var(--muted); font-size: 12px; line-height: 1.65; margin-top: 12px;
+    }
+    .checks { display: grid; gap: 9px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+    .check { display: grid; grid-template-columns: 24px 1fr; gap: 8px; align-items: start; }
+    .num { width: 24px; height: 24px; border-radius: 999px; display: grid; place-items: center; background: var(--green-2); color: white; font-size: 11px; }
+    .mono { color: var(--text); background: #111318; border: 1px solid var(--line-soft); padding: 1px 5px; border-radius: 4px; }
+    .footer-note { margin-top: 14px; color: var(--dim); font-size: 11px; line-height: 1.6; }
+
+    @media (max-width: 920px) {
+      .layout, .designer-wrap { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .topbar { display: block; }
+      .status-pill { margin-top: 12px; }
+    }
+    @media (max-width: 560px) {
+      .app { width: calc(100% - 20px); padding-top: 18px; }
+      .stats { grid-template-columns: 1fr; }
+      .seg, .seg.three { grid-template-columns: 1fr; }
+      .button-row { display: grid; grid-template-columns: 1fr; }
+      .button-row .btn { min-width: 0; width: 100%; }
+      h1 { font-size: 24px; }
+      .tabs { padding: 0 6px; }
+      .view { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="topbar">
+      <div>
+        <h1>Cronmit</h1>
+        <p class="subtitle">A GitHub streak keeper and 12-week contribution graph designer. It never uses empty commits: every run writes real audit data before committing, and art mode keeps a one-commit floor on every day.</p>
+      </div>
+      <div class="status-pill"><span class="dot"></span><span>streak-safe by design</span></div>
+    </section>
+
+    <section class="layout">
+      <aside class="panel pad">
+        <div class="panel-title">Settings</div>
+        <div class="controls">
+          <div class="field">
+            <label>GitHub username</label>
+            <input id="username" value="codeleyoungtech" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label>Repository name</label>
+            <input id="repo" value="cronmit" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label>Default branch</label>
+            <input id="branch" value="main" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label>Timezone</label>
+            <select id="tz">
+              <option value="-8">UTC-8 Pacific</option>
+              <option value="-5">UTC-5 Eastern</option>
+              <option value="0">UTC+0 GMT</option>
+              <option value="1" selected>UTC+1 Lagos / WAT</option>
+              <option value="2">UTC+2 SAST</option>
+              <option value="3">UTC+3 EAT</option>
+              <option value="5.5">UTC+5:30 IST</option>
+              <option value="8">UTC+8</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Daily mode</label>
+            <div class="seg">
+              <button class="active" data-commits="5">5 commits</button>
+              <button data-commits="10">10 commits</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Generator mode</label>
+            <div class="seg">
+              <button class="active" data-mode="steady">steady</button>
+              <button data-mode="art">art</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Art cycle start date</label>
+            <input id="startDate" type="date" />
+          </div>
+          <div class="button-row">
+            <button class="btn blue" id="loadName">load name</button>
+            <button class="btn warn" id="clearArt">soft clear</button>
+          </div>
+        </div>
+      </aside>
+
+      <section>
+        <div class="stats">
+          <div class="stat"><small>commits today</small><strong id="todayCount">5</strong><span>target</span></div>
+          <div class="stat"><small>12-week total</small><strong id="cycleTotal">420</strong><span>commits</span></div>
+          <div class="stat"><small>blank days</small><strong id="blankDays">0</strong><span>allowed</span></div>
+          <div class="stat"><small>empty commits</small><strong id="emptyCommits">0</strong><span>ever</span></div>
+        </div>
+
+        <div class="panel">
+          <nav class="tabs" aria-label="Cronmit tabs">
+            <button class="tab active" data-tab="schedule">schedule</button>
+            <button class="tab" data-tab="designer">12-week painter</button>
+            <button class="tab" data-tab="workflow">workflow.yml</button>
+            <button class="tab" data-tab="script">commit.sh</button>
+            <button class="tab" data-tab="plan">cronmit-plan.json</button>
+            <button class="tab" data-tab="commands">github commands</button>
+            <button class="tab" data-tab="setup">setup</button>
+          </nav>
+
+          <div class="view active" id="schedule">
+            <div class="panel-title">Daily run slots</div>
+            <div class="schedule" id="schedulePills"></div>
+            <div class="note">GitHub Actions cron is UTC. Cronmit displays local time first, then the UTC hour/minute used in the workflow.</div>
+            <div class="action-grid">
+              <button class="btn primary" id="downloadAll">download generated files</button>
+              <button class="btn blue" data-copy="commandsCode">copy github commands</button>
+              <button class="btn blue" data-copy="workflowCode">copy workflow</button>
+              <button class="btn blue" data-copy="planCode">copy plan</button>
+            </div>
+          </div>
+
+          <div class="view" id="designer">
+            <div class="designer-wrap">
+              <div>
+                <div class="panel-title">Contribution graph painter</div>
+                <div class="graph-board">
+                  <div class="week-head" id="weekHead"></div>
+                  <div class="paint-grid" id="paintGrid"></div>
+                </div>
+                <div class="footer-note">Rows are Sunday through Saturday, matching GitHub's contribution graph. Level 1 is still one real commit, so the streak stays alive even where the art background is quiet.</div>
+              </div>
+              <div>
+                <div class="panel-title">Brush</div>
+                <div class="legend">
+                  <button class="level-btn active" data-level="1"><span class="swatch"></span>1 commit floor</button>
+                  <button class="level-btn" data-level="2"><span class="swatch l2"></span>3 commits</button>
+                  <button class="level-btn" data-level="3"><span class="swatch l3"></span>5 commits</button>
+                  <button class="level-btn" data-level="4"><span class="swatch l4"></span>10 commits</button>
+                </div>
+                <div class="note">Use level 1 for negative space. Cronmit treats true zero as a bug, not a design tool.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="view" id="workflow">
+            <div class="code-wrap"><button class="copy" data-copy="workflowCode">copy</button><pre id="workflowCode"></pre></div>
+          </div>
+
+          <div class="view" id="script">
+            <div class="code-wrap"><button class="copy" data-copy="scriptCode">copy</button><pre id="scriptCode"></pre></div>
+          </div>
+
+          <div class="view" id="plan">
+            <div class="code-wrap"><button class="copy" data-copy="planCode">copy</button><pre id="planCode"></pre></div>
+          </div>
+
+          <div class="view" id="commands">
+            <div class="code-wrap"><button class="copy" data-copy="commandsCode">copy</button><pre id="commandsCode"></pre></div>
+            <div class="note">These commands are meant for your terminal, where GitHub CLI is already authenticated. The dashboard does not ask for a GitHub token.</div>
+          </div>
+
+          <div class="view" id="setup">
+            <div class="checks">
+              <div class="check"><span class="num">1</span><span>Use this dashboard to choose mode, commit count, timezone, and the 12-week art plan.</span></div>
+              <div class="check"><span class="num">2</span><span>Download or copy the generated files into <span class="mono">.github/workflows/cronmit.yml</span>, <span class="mono">scripts/commit.sh</span>, and <span class="mono">cronmit-plan.json</span>.</span></div>
+              <div class="check"><span class="num">3</span><span>Run the generated GitHub commands to set <span class="mono">COMMITS_PER_DAY</span>, <span class="mono">CRONMIT_MODE</span>, and Actions permissions.</span></div>
+              <div class="check"><span class="num">4</span><span>Push the repo, then run the workflow manually once from the Actions tab or with the generated <span class="mono">gh workflow run</span> command.</span></div>
+              <div class="check"><span class="num">5</span><span>If the repo is private, enable private contributions on your GitHub profile.</span></div>
+            </div>
+            <div class="note">Cronmit does not bypass branch protection. If your default branch blocks GitHub Actions pushes, use a dedicated streak repo or loosen rules for the Actions bot.</div>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const state = {
+      commits: 5,
+      mode: "steady",
+      brush: 1,
+      grid: Array.from({ length: 7 }, () => Array(12).fill(1))
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const pad = (n) => String(n).padStart(2, "0");
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const levelCommits = { 1: 1, 2: 3, 3: 5, 4: 10 };
+    const namePattern = [
+      [1,4,4,4,1,4,4,4,1,4,1,4],
+      [4,1,1,1,1,4,1,1,1,4,1,4],
+      [4,1,4,4,1,4,4,1,1,4,4,4],
+      [4,1,1,4,1,4,1,1,1,4,1,4],
+      [4,1,1,4,1,4,4,4,1,4,1,4],
+      [4,1,1,4,1,4,1,1,1,4,1,4],
+      [1,4,4,1,1,4,4,4,1,4,1,4]
+    ];
+
+    function localSlots(count) {
+      const slots = [[8, 30], [11, 15], [14, 0], [16, 45], [20, 30], [7, 15], [10, 0], [13, 15], [18, 15], [22, 0]];
+      return slots.slice(0, count);
+    }
+
+    function toUtc(hour, minute, offset) {
+      const total = Math.round(hour * 60 + minute - offset * 60);
+      const wrapped = ((total % 1440) + 1440) % 1440;
+      return { hour: Math.floor(wrapped / 60), minute: wrapped % 60 };
+    }
+
+    function getSettings() {
+      return {
+        username: $("username").value.trim() || "yourusername",
+        repo: $("repo").value.trim() || "cronmit",
+        branch: $("branch").value.trim() || "main",
+        tz: Number($("tz").value),
+        startDate: $("startDate").value || todayIso()
+      };
+    }
+
+    function todayIso() {
+      const d = new Date();
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    }
+
+    function mostRecentSundayIso() {
+      const d = new Date();
+      d.setDate(d.getDate() - d.getDay());
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    }
+
+    function addDays(iso, n) {
+      const d = new Date(`${iso}T00:00:00`);
+      d.setDate(d.getDate() + n);
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    }
+
+    function buildPlanObject() {
+      const settings = getSettings();
+      const daysOut = [];
+      for (let week = 0; week < 12; week += 1) {
+        for (let day = 0; day < 7; day += 1) {
+          const level = state.mode === "art" ? state.grid[day][week] : (state.commits === 10 ? 4 : 3);
+          daysOut.push({
+            date: addDays(settings.startDate, week * 7 + day),
+            week: week + 1,
+            day: days[day],
+            level,
+            commits: Math.max(1, state.mode === "art" ? levelCommits[level] : state.commits)
+          });
+        }
+      }
+      return {
+        app: "cronmit",
+        version: 1,
+        mode: state.mode,
+        timezone_offset: settings.tz,
+        start_date: settings.startDate,
+        guarantee: "Every day has at least one real file-changing commit. Empty commits are never used.",
+        days: daysOut
+      };
+    }
+
+    function renderSchedule() {
+      const settings = getSettings();
+      $("schedulePills").innerHTML = "";
+      localSlots(10).forEach(([h, m], index) => {
+        const utc = toUtc(h, m, settings.tz);
+        const pill = document.createElement("span");
+        const active = index < state.commits || state.mode === "art";
+        pill.className = active ? "time-pill" : "time-pill off";
+        pill.textContent = `slot ${index + 1}: ${pad(h)}:${pad(m)} local -> ${pad(utc.hour)}:${pad(utc.minute)} UTC`;
+        $("schedulePills").appendChild(pill);
+      });
+      if (state.mode === "art") {
+        const hint = document.createElement("span");
+        hint.className = "time-pill off";
+        hint.textContent = "art mode skips extra slots after the day's target is reached";
+        $("schedulePills").appendChild(hint);
+      }
+    }
+
+    function renderGrid() {
+      $("weekHead").innerHTML = "<span></span>" + Array.from({ length: 12 }, (_, i) => `<span>W${i + 1}</span>`).join("");
+      $("paintGrid").innerHTML = "";
+      days.forEach((day, row) => {
+        const label = document.createElement("div");
+        label.className = "day-label";
+        label.textContent = day;
+        $("paintGrid").appendChild(label);
+        for (let col = 0; col < 12; col += 1) {
+          const cell = document.createElement("button");
+          cell.className = `cell l${state.grid[row][col]}`;
+          cell.title = `${day} week ${col + 1}: ${levelCommits[state.grid[row][col]]} commits`;
+          cell.addEventListener("click", () => {
+            state.grid[row][col] = state.brush;
+            state.mode = "art";
+            syncButtons();
+            update();
+          });
+          $("paintGrid").appendChild(cell);
+        }
+      });
+    }
+
+    function workflowYaml() {
+      const settings = getSettings();
+      const slots = localSlots(10).map(([h, m], index) => {
+        const utc = toUtc(h, m, settings.tz);
+        return `    # slot ${index + 1}: ${pad(h)}:${pad(m)} local\n    - cron: '${utc.minute} ${utc.hour} * * *'`;
+      }).join("\n");
+      return `name: cronmit
+
+on:
+  schedule:
+${slots}
+  workflow_dispatch:
+    inputs:
+      commit_count:
+        description: "Manual run commit count"
+        required: false
+        default: "1"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cronmit-\${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${settings.branch}
+          token: \${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Resolve slot
+        id: slot
+        shell: bash
+        run: |
+          schedules=(
+${localSlots(10).map(([h, m]) => {
+        const utc = toUtc(h, m, settings.tz);
+        return `            "${utc.minute} ${utc.hour} * * *"`;
+      }).join("\n")}
+          )
+          slot=1
+          for i in "\${!schedules[@]}"; do
+            if [[ "\${{ github.event.schedule }}" == "\${schedules[$i]}" ]]; then
+              slot=$((i + 1))
+            fi
+          done
+          echo "slot=$slot" >> "$GITHUB_OUTPUT"
+
+      - name: Commit real streak data
+        env:
+          GITHUB_USERNAME: \${{ github.repository_owner }}
+          COMMITS_PER_DAY: \${{ vars.COMMITS_PER_DAY || '${state.commits}' }}
+          CRONMIT_MODE: \${{ vars.CRONMIT_MODE || '${state.mode}' }}
+          COMMIT_SLOT: \${{ steps.slot.outputs.slot }}
+          MANUAL_COUNT: \${{ inputs.commit_count || '' }}
+        run: bash scripts/commit.sh`;
+    }
+
+    function commitScript() {
+      return `#!/usr/bin/env bash
+set -euo pipefail
+
+mkdir -p streak
+
+USERNAME="\${GITHUB_USERNAME:-github-actions[bot]}"
+COUNT="\${COMMITS_PER_DAY:-5}"
+SLOT="\${COMMIT_SLOT:-1}"
+MODE="\${CRONMIT_MODE:-art}"
+MANUAL_COUNT="\${MANUAL_COUNT:-}"
+TODAY="$(date -u +%F)"
+NOW="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+if [[ -n "$MANUAL_COUNT" ]]; then
+  TARGET="$MANUAL_COUNT"
+elif [[ "$MODE" == "art" && -f cronmit-plan.json ]]; then
+  TARGET="$(
+    TODAY="$TODAY" node -e "const fs = require('fs'); const plan = JSON.parse(fs.readFileSync('cronmit-plan.json', 'utf8')); const row = (plan.days || []).find(day => day.date === process.env.TODAY); process.stdout.write(String(row ? row.commits : 1));"
+  )"
+else
+  TARGET="$COUNT"
+fi
+
+if ! [[ "$TARGET" =~ ^[0-9]+$ ]]; then
+  echo "Invalid target: $TARGET" >&2
+  exit 1
+fi
+
+if (( TARGET < 1 )); then
+  echo "Cronmit refuses zero-commit days. Raising target to 1."
+  TARGET=1
+fi
+
+if (( SLOT > TARGET )); then
+  echo "Slot $SLOT is above today's target $TARGET. Nothing to do."
+  exit 0
+fi
+
+git config user.name "$USERNAME"
+git config user.email "$USERNAME@users.noreply.github.com"
+
+RUN_ID="\${GITHUB_RUN_ID:-local}-\${GITHUB_RUN_ATTEMPT:-1}-$SLOT"
+STAMP="$(date -u +%s%N)"
+DAILY_FILE="streak/$TODAY.md"
+LOG_FILE="streak/log.ndjson"
+
+{
+  echo ""
+  echo "## $NOW"
+  echo ""
+  echo "- slot: $SLOT"
+  echo "- target: $TARGET"
+  echo "- mode: $MODE"
+  echo "- run: $RUN_ID"
+  echo "- nonce: $STAMP"
+} >> "$DAILY_FILE"
+
+printf '{"time":"%s","date":"%s","slot":%s,"target":%s,"mode":"%s","run":"%s","nonce":"%s"}\\n' \
+  "$NOW" "$TODAY" "$SLOT" "$TARGET" "$MODE" "$RUN_ID" "$STAMP" >> "$LOG_FILE"
+
+git add streak
+
+if git diff --cached --quiet; then
+  echo "Cronmit safety stop: no tracked file changed, so no commit was created." >&2
+  exit 1
+fi
+
+git commit -m "chore(cronmit): keep streak $TODAY slot $SLOT/$TARGET"
+git pull --rebase --autostash
+git push`;
+    }
+
+    function commandsText() {
+      const settings = getSettings();
+      return `# Run from the Cronmit repo after pushing it to GitHub.
+gh repo edit ${settings.username}/${settings.repo} --enable-actions
+gh api -X PUT repos/${settings.username}/${settings.repo}/actions/permissions/workflow \\
+  -f default_workflow_permissions=write \\
+  -F can_approve_pull_request_reviews=false
+
+gh variable set COMMITS_PER_DAY --repo ${settings.username}/${settings.repo} --body "${state.commits}"
+gh variable set CRONMIT_MODE --repo ${settings.username}/${settings.repo} --body "${state.mode}"
+
+chmod +x scripts/commit.sh
+git add .github/workflows/cronmit.yml scripts/commit.sh cronmit-plan.json github_streak_dashboard.html
+git commit -m "chore: configure cronmit" || true
+git push
+
+gh workflow run cronmit.yml --repo ${settings.username}/${settings.repo} -f commit_count=1`;
+    }
+
+    function renderCode() {
+      $("workflowCode").textContent = workflowYaml();
+      $("scriptCode").textContent = commitScript();
+      $("planCode").textContent = JSON.stringify(buildPlanObject(), null, 2);
+      $("commandsCode").textContent = commandsText();
+    }
+
+    function renderStats() {
+      const plan = buildPlanObject();
+      const total = plan.days.reduce((sum, day) => sum + day.commits, 0);
+      $("todayCount").textContent = state.mode === "steady" ? state.commits : "1-10";
+      $("cycleTotal").textContent = total;
+      $("blankDays").textContent = 0;
+      $("emptyCommits").textContent = 0;
+    }
+
+    function syncButtons() {
+      document.querySelectorAll("[data-commits]").forEach((btn) => btn.classList.toggle("active", Number(btn.dataset.commits) === state.commits));
+      document.querySelectorAll("[data-mode]").forEach((btn) => btn.classList.toggle("active", btn.dataset.mode === state.mode));
+      document.querySelectorAll("[data-level]").forEach((btn) => btn.classList.toggle("active", Number(btn.dataset.level) === state.brush));
+    }
+
+    function update() {
+      renderSchedule();
+      renderGrid();
+      renderStats();
+      renderCode();
+      syncButtons();
+    }
+
+    document.querySelectorAll("[data-commits]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        state.commits = Number(btn.dataset.commits);
+        state.mode = "steady";
+        update();
+      });
+    });
+
+    document.querySelectorAll("[data-mode]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        state.mode = btn.dataset.mode;
+        update();
+      });
+    });
+
+    document.querySelectorAll("[data-level]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        state.brush = Number(btn.dataset.level);
+        syncButtons();
+      });
+    });
+
+    document.querySelectorAll(".tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
+        document.querySelectorAll(".view").forEach((v) => v.classList.remove("active"));
+        tab.classList.add("active");
+        $(tab.dataset.tab).classList.add("active");
+      });
+    });
+
+    document.querySelectorAll("input, select").forEach((input) => input.addEventListener("input", update));
+
+    document.querySelectorAll("[data-copy]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        await navigator.clipboard.writeText($(btn.dataset.copy).textContent);
+        btn.textContent = "copied";
+        setTimeout(() => { btn.textContent = "copy"; }, 1300);
+      });
+    });
+
+    function downloadFile(filename, text) {
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    $("downloadAll").addEventListener("click", () => {
+      downloadFile("cronmit.yml", $("workflowCode").textContent);
+      downloadFile("commit.sh", $("scriptCode").textContent);
+      downloadFile("cronmit-plan.json", $("planCode").textContent);
+      downloadFile("cronmit-github-commands.sh", $("commandsCode").textContent);
+    });
+
+    $("loadName").addEventListener("click", () => {
+      state.grid = namePattern.map((row) => row.slice());
+      state.mode = "art";
+      update();
+    });
+
+    $("clearArt").addEventListener("click", () => {
+      state.grid = Array.from({ length: 7 }, () => Array(12).fill(1));
+      state.mode = "art";
+      update();
+    });
+
+    $("startDate").value = mostRecentSundayIso();
+    update();
+  </script>
+</body>
+</html>

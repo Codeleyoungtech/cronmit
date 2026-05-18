@@ -1,0 +1,81 @@
+name: cronmit
+
+on:
+  schedule:
+    # slot 1: 08:30 Lagos/WAT
+    - cron: '30 7 * * *'
+    # slot 2: 11:15 Lagos/WAT
+    - cron: '15 10 * * *'
+    # slot 3: 14:00 Lagos/WAT
+    - cron: '0 13 * * *'
+    # slot 4: 16:45 Lagos/WAT
+    - cron: '45 15 * * *'
+    # slot 5: 20:30 Lagos/WAT
+    - cron: '30 19 * * *'
+    # slot 6: 07:15 Lagos/WAT
+    - cron: '15 6 * * *'
+    # slot 7: 10:00 Lagos/WAT
+    - cron: '0 9 * * *'
+    # slot 8: 13:15 Lagos/WAT
+    - cron: '15 12 * * *'
+    # slot 9: 18:15 Lagos/WAT
+    - cron: '15 17 * * *'
+    # slot 10: 22:00 Lagos/WAT
+    - cron: '0 21 * * *'
+  workflow_dispatch:
+    inputs:
+      commit_count:
+        description: "Manual run commit count"
+        required: false
+        default: "1"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cronmit-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Resolve slot
+        id: slot
+        shell: bash
+        run: |
+          schedules=(
+            "30 7 * * *"
+            "15 10 * * *"
+            "0 13 * * *"
+            "45 15 * * *"
+            "30 19 * * *"
+            "15 6 * * *"
+            "0 9 * * *"
+            "15 12 * * *"
+            "15 17 * * *"
+            "0 21 * * *"
+          )
+
+          slot=1
+          for i in "${!schedules[@]}"; do
+            if [[ "${{ github.event.schedule }}" == "${schedules[$i]}" ]]; then
+              slot=$((i + 1))
+            fi
+          done
+
+          echo "slot=$slot" >> "$GITHUB_OUTPUT"
+
+      - name: Commit real streak data
+        env:
+          GITHUB_USERNAME: ${{ github.repository_owner }}
+          COMMITS_PER_DAY: ${{ vars.COMMITS_PER_DAY || '5' }}
+          CRONMIT_MODE: ${{ vars.CRONMIT_MODE || 'art' }}
+          COMMIT_SLOT: ${{ steps.slot.outputs.slot }}
+          MANUAL_COUNT: ${{ inputs.commit_count || '' }}
+        run: bash scripts/commit.sh
