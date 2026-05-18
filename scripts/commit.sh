@@ -55,8 +55,7 @@ LOG_FILE="streak/log.ndjson"
   echo "- nonce: $STAMP"
 } >> "$DAILY_FILE"
 
-printf '{"time":"%s","date":"%s","slot":%s,"target":%s,"mode":"%s","run":"%s","nonce":"%s"}\n' \
-  "$NOW" "$TODAY" "$SLOT" "$TARGET" "$MODE" "$RUN_ID" "$STAMP" >> "$LOG_FILE"
+printf '{"time":"%s","date":"%s","slot":%s,"target":%s,"mode":"%s","run":"%s","nonce":"%s"}\n'   "$NOW" "$TODAY" "$SLOT" "$TARGET" "$MODE" "$RUN_ID" "$STAMP" >> "$LOG_FILE"
 
 git add streak
 
