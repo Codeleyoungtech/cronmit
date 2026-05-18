@@ -1,6 +1,6 @@
 # Cronmit
 
-Cronmit keeps a GitHub contribution streak alive with real file-changing commits. It also includes a local HTML dashboard for choosing streak settings, generating the GitHub Actions workflow, and designing a 12-week contribution graph pattern.
+Cronmit keeps a GitHub contribution streak alive with real file-changing commits. It also includes a dashboard for choosing streak settings, generating the GitHub Actions workflow, and designing a 12-week contribution graph pattern.
 
 The rule is simple: no empty commits. The workflow writes to `streak/YYYY-MM-DD.md` and `streak/log.ndjson`, stages those files, and stops if nothing changed.
 
@@ -27,6 +27,17 @@ Open `github_streak_dashboard.html` in your browser. From there you can:
 - copy or download `cronmit.yml`, `commit.sh`, `cronmit-plan.json`, and GitHub CLI setup commands.
 
 The dashboard does not ask for a GitHub token. It generates commands for your terminal instead.
+
+## Hosted Mode
+
+The dashboard is GitHub Pages-ready. Once Pages is enabled, this repo can publish it as a hosted app.
+
+There are two levels:
+
+- Static mode: the dashboard generates files and commands. This works with no backend.
+- Hosted apply mode: the dashboard connects to a small OAuth backend, then applies files, variables, permissions, and workflow runs directly from the UI.
+
+GitHub Pages is static, so it cannot safely store OAuth secrets or write to repos by itself. See `docs/HOSTED_MODE.md` for the backend contract.
 
 ## GitHub Setup
 

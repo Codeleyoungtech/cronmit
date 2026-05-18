@@ -75,6 +75,7 @@
       border: 1px solid var(--line); background: #111318; color: var(--muted);
       border-radius: 7px; min-height: 38px; padding: 8px 10px;
     }
+    .seg button:disabled, .btn:disabled { cursor: not-allowed; opacity: 0.52; }
     .seg button.active, .btn.primary { background: var(--green-2); color: white; border-color: var(--green-3); }
     .btn.blue { border-color: rgba(125, 183, 255, 0.5); color: var(--blue); }
     .btn.warn { border-color: rgba(245, 196, 81, 0.45); color: var(--amber); }
@@ -82,6 +83,9 @@
     .button-row .btn { flex: 1; min-width: 116px; }
     .action-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
     .action-grid .btn { width: 100%; }
+    .hosted-actions { display: grid; gap: 10px; margin-top: 12px; }
+    .hosted-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .status-line { color: var(--muted); font-size: 12px; line-height: 1.6; min-height: 20px; }
 
     .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
     .stat { background: var(--panel); border: 1px solid var(--line-soft); border-radius: 8px; padding: 13px; }
@@ -242,6 +246,7 @@
             <button class="tab" data-tab="workflow">workflow.yml</button>
             <button class="tab" data-tab="script">commit.sh</button>
             <button class="tab" data-tab="plan">cronmit-plan.json</button>
+            <button class="tab" data-tab="hosted">hosted apply</button>
             <button class="tab" data-tab="commands">github commands</button>
             <button class="tab" data-tab="setup">setup</button>
           </nav>
@@ -293,6 +298,24 @@
             <div class="code-wrap"><button class="copy" data-copy="planCode">copy</button><pre id="planCode"></pre></div>
           </div>
 
+          <div class="view" id="hosted">
+            <div class="panel-title">One-click hosted mode</div>
+            <div class="checks">
+              <div class="check"><span class="num">1</span><span>Connect GitHub with an OAuth backend.</span></div>
+              <div class="check"><span class="num">2</span><span>Apply the generated workflow, script, plan, variables, and permissions.</span></div>
+              <div class="check"><span class="num">3</span><span>Run Cronmit once to verify the full loop.</span></div>
+            </div>
+            <div class="hosted-actions">
+              <div class="hosted-row">
+                <button class="btn blue" id="connectGithub">connect github</button>
+                <button class="btn primary" id="applyHosted">apply to repo</button>
+                <button class="btn blue" id="runHosted">run now</button>
+              </div>
+              <div class="status-line" id="hostedStatus"></div>
+            </div>
+            <div class="note">GitHub Pages can host this dashboard, but it cannot safely perform writes by itself. Hosted mode needs a tiny API that handles GitHub OAuth and calls the GitHub REST API. Without that API, use the generated files or commands tabs.</div>
+          </div>
+
           <div class="view" id="commands">
             <div class="code-wrap"><button class="copy" data-copy="commandsCode">copy</button><pre id="commandsCode"></pre></div>
             <div class="note">These commands are meant for your terminal, where GitHub CLI is already authenticated. The dashboard does not ask for a GitHub token.</div>
@@ -318,8 +341,10 @@
       commits: 5,
       mode: "steady",
       brush: 1,
-      grid: Array.from({ length: 7 }, () => Array(12).fill(1))
+      grid: Array.from({ length: 7 }, () => Array(12).fill(1)),
+      hostedSession: new URLSearchParams(location.search).get("session") || localStorage.getItem("cronmit_session") || ""
     };
+    const HOSTED_API_BASE = window.CRONMIT_API_BASE || "";
 
     const $ = (id) => document.getElementById(id);
     const pad = (n) => String(n).padStart(2, "0");
@@ -596,6 +621,60 @@ git push
 gh workflow run cronmit.yml --repo ${settings.username}/${settings.repo} -f commit_count=1`;
     }
 
+    function hostedPayload() {
+      const settings = getSettings();
+      return {
+        settings: {
+          owner: settings.username,
+          repo: settings.repo,
+          branch: settings.branch,
+          commits_per_day: state.commits,
+          mode: state.mode,
+          timezone_offset: settings.tz
+        },
+        files: {
+          ".github/workflows/cronmit.yml": workflowYaml(),
+          "scripts/commit.sh": commitScript(),
+          "cronmit-plan.json": JSON.stringify(buildPlanObject(), null, 2) + "\n"
+        }
+      };
+    }
+
+    function setHostedStatus(message) {
+      $("hostedStatus").textContent = message;
+    }
+
+    async function hostedRequest(path, body) {
+      if (!HOSTED_API_BASE) {
+        throw new Error("Hosted API is not configured for this dashboard.");
+      }
+      const response = await fetch(`${HOSTED_API_BASE}${path}`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "authorization": `Bearer ${state.hostedSession}`
+        },
+        body: JSON.stringify(body)
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || `Request failed with ${response.status}`);
+      return data;
+    }
+
+    function syncHostedControls() {
+      const ready = Boolean(HOSTED_API_BASE);
+      $("connectGithub").disabled = !ready;
+      $("applyHosted").disabled = !ready || !state.hostedSession;
+      $("runHosted").disabled = !ready || !state.hostedSession;
+      if (!ready) {
+        setHostedStatus("Hosted API not configured. This copy can still generate files and commands.");
+      } else if (!state.hostedSession) {
+        setHostedStatus("Hosted API configured. Connect GitHub to apply changes directly.");
+      } else {
+        setHostedStatus("Connected. You can apply settings or run Cronmit now.");
+      }
+    }
+
     function renderCode() {
       $("workflowCode").textContent = workflowYaml();
       $("scriptCode").textContent = commitScript();
@@ -624,6 +703,7 @@ gh workflow run cronmit.yml --repo ${settings.username}/${settings.repo} -f comm
       renderStats();
       renderCode();
       syncButtons();
+      syncHostedControls();
     }
 
     document.querySelectorAll("[data-commits]").forEach((btn) => {
@@ -685,6 +765,36 @@ gh workflow run cronmit.yml --repo ${settings.username}/${settings.repo} -f comm
       downloadFile("cronmit-plan.json", $("planCode").textContent);
       downloadFile("cronmit-github-commands.sh", $("commandsCode").textContent);
     });
+
+    $("connectGithub").addEventListener("click", () => {
+      if (!HOSTED_API_BASE) return;
+      location.href = `${HOSTED_API_BASE}/auth/github?return_to=${encodeURIComponent(location.href.split("?")[0])}`;
+    });
+
+    $("applyHosted").addEventListener("click", async () => {
+      try {
+        setHostedStatus("Applying generated files, variables, and permissions...");
+        const data = await hostedRequest("/apply", hostedPayload());
+        setHostedStatus(data.message || "Applied.");
+      } catch (error) {
+        setHostedStatus(error.message);
+      }
+    });
+
+    $("runHosted").addEventListener("click", async () => {
+      try {
+        setHostedStatus("Starting workflow run...");
+        const data = await hostedRequest("/run", { settings: hostedPayload().settings, commit_count: 1 });
+        setHostedStatus(data.message || "Workflow run started.");
+      } catch (error) {
+        setHostedStatus(error.message);
+      }
+    });
+
+    if (state.hostedSession) {
+      localStorage.setItem("cronmit_session", state.hostedSession);
+      history.replaceState(null, "", location.pathname);
+    }
 
     $("loadName").addEventListener("click", () => {
       state.grid = namePattern.map((row) => row.slice());
