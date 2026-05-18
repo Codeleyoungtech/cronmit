@@ -224,6 +224,10 @@
             <label>Art cycle start date</label>
             <input id="startDate" type="date" />
           </div>
+          <div class="field">
+            <label>Backend API URL</label>
+            <input id="apiBase" value="" autocomplete="off" placeholder="https://cronmit-api.example.workers.dev" />
+          </div>
           <div class="button-row">
             <button class="btn blue" id="loadName">load name</button>
             <button class="btn warn" id="clearArt">soft clear</button>
@@ -342,9 +346,9 @@
       mode: "steady",
       brush: 1,
       grid: Array.from({ length: 7 }, () => Array(12).fill(1)),
-      hostedSession: new URLSearchParams(location.search).get("session") || localStorage.getItem("cronmit_session") || ""
+      hostedSession: new URLSearchParams(location.search).get("session") || localStorage.getItem("cronmit_session") || "",
+      apiBase: localStorage.getItem("cronmit_api_base") || window.CRONMIT_API_BASE || ""
     };
-    const HOSTED_API_BASE = window.CRONMIT_API_BASE || "";
 
     const $ = (id) => document.getElementById(id);
     const pad = (n) => String(n).padStart(2, "0");
@@ -645,10 +649,10 @@ gh workflow run cronmit.yml --repo ${settings.username}/${settings.repo} -f comm
     }
 
     async function hostedRequest(path, body) {
-      if (!HOSTED_API_BASE) {
+      if (!state.apiBase) {
         throw new Error("Hosted API is not configured for this dashboard.");
       }
-      const response = await fetch(`${HOSTED_API_BASE}${path}`, {
+      const response = await fetch(`${state.apiBase}${path}`, {
         method: "POST",
         headers: {
           "content-type": "application/json",
@@ -662,7 +666,7 @@ gh workflow run cronmit.yml --repo ${settings.username}/${settings.repo} -f comm
     }
 
     function syncHostedControls() {
-      const ready = Boolean(HOSTED_API_BASE);
+      const ready = Boolean(state.apiBase);
       $("connectGithub").disabled = !ready;
       $("applyHosted").disabled = !ready || !state.hostedSession;
       $("runHosted").disabled = !ready || !state.hostedSession;
@@ -739,6 +743,12 @@ gh workflow run cronmit.yml --repo ${settings.username}/${settings.repo} -f comm
 
     document.querySelectorAll("input, select").forEach((input) => input.addEventListener("input", update));
 
+    $("apiBase").addEventListener("input", () => {
+      state.apiBase = $("apiBase").value.trim().replace(/\/$/, "");
+      localStorage.setItem("cronmit_api_base", state.apiBase);
+      syncHostedControls();
+    });
+
     document.querySelectorAll("[data-copy]").forEach((btn) => {
       btn.addEventListener("click", async () => {
         await navigator.clipboard.writeText($(btn.dataset.copy).textContent);
@@ -767,8 +777,8 @@ gh workflow run cronmit.yml --repo ${settings.username}/${settings.repo} -f comm
     });
 
     $("connectGithub").addEventListener("click", () => {
-      if (!HOSTED_API_BASE) return;
-      location.href = `${HOSTED_API_BASE}/auth/github?return_to=${encodeURIComponent(location.href.split("?")[0])}`;
+      if (!state.apiBase) return;
+      location.href = `${state.apiBase}/auth/github?return_to=${encodeURIComponent(location.href.split("?")[0])}`;
     });
 
     $("applyHosted").addEventListener("click", async () => {
@@ -809,6 +819,7 @@ gh workflow run cronmit.yml --repo ${settings.username}/${settings.repo} -f comm
     });
 
     $("startDate").value = mostRecentSundayIso();
+    $("apiBase").value = state.apiBase;
     update();
   </script>
 </body>

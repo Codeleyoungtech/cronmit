@@ -15,6 +15,7 @@ Some people use GitHub's contribution graph as a habit tracker, public accountab
 - `scripts/commit.sh` creates the real streak commits.
 - `cronmit-plan.json` controls art mode for a 12-week graph cycle.
 - `streak/` stores the audit trail.
+- `worker/` contains the optional hosted API for one-click dashboard apply.
 
 ## Dashboard
 
@@ -38,6 +39,8 @@ There are two levels:
 - Hosted apply mode: the dashboard connects to a small OAuth backend, then applies files, variables, permissions, and workflow runs directly from the UI.
 
 GitHub Pages is static, so it cannot safely store OAuth secrets or write to repos by itself. See `docs/HOSTED_MODE.md` for the backend contract.
+
+Most users should not need to deploy a backend. The intended public setup is one official Cronmit API that the hosted dashboard uses. The Worker source is included for self-hosters and contributors.
 
 ## GitHub Setup
 

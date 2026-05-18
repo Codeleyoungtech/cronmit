@@ -6,3 +6,5 @@ dist/
 .env.*
 cronmit-note.md
 cromit-note.md
+worker/.dev.vars
+.wrangler/

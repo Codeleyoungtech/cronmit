@@ -85,4 +85,8 @@ Starts `cronmit.yml` with `commit_count=1`.
 
 Use a tiny Cloudflare Worker, Fly.io app, or Vercel function. Cloudflare Worker is a good fit because Cronmit needs only OAuth, a few GitHub REST calls, and no long-running process.
 
+This repo includes a starter Worker in `worker/`.
+
+Normal users should not need to deploy it. The intended public product is one official Cronmit API connected to the GitHub Pages dashboard. Self-hosting is only for people who want their own OAuth app, own domain, or private deployment.
+
 Do not put a GitHub OAuth client secret inside the static dashboard.

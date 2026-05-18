@@ -1,0 +1,15 @@
+name = "cronmit-api"
+main = "src/index.js"
+compatibility_date = "2026-05-18"
+
+kv_namespaces = [
+  { binding = "CRONMIT_SESSIONS", id = "replace-with-production-kv-id", preview_id = "replace-with-preview-kv-id" }
+]
+
+[vars]
+GITHUB_CLIENT_ID = "replace-with-github-oauth-client-id"
+ALLOWED_ORIGINS = "https://codeleyoungtech.github.io,http://localhost:8788,http://127.0.0.1:8788"
+
+# Set secrets with:
+# wrangler secret put GITHUB_CLIENT_SECRET
+# wrangler secret put SESSION_SECRET
